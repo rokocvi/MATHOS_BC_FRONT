@@ -20,3 +20,11 @@ export function deleteBook(id){
     const books = getBooks().filter(b=>b.id !== id);
     saveBooks(books);
 }
+
+export function updateBook(updatedBook) {
+  const books = getBooks();
+  const updatedBooks = books.map(book =>
+    book.id === updatedBook.id ? updatedBook : book
+  );
+  localStorage.setItem('books', JSON.stringify(updatedBooks));
+}

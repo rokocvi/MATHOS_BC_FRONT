@@ -1,0 +1,108 @@
+.books-list {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.books-list h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #333;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.search-input,
+.status-filter {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  min-width: 200px;
+}
+
+.clear-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.clear-btn:hover {
+  background-color: #c0392b;
+}
+
+.results-count {
+  margin: 1rem 0;
+  text-align: center;
+  color: #666;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.book-info {
+  font-size: 1rem;
+  color: #333;
+  flex: 1; /* zauzima sav prostor lijevo */
+}
+
+.status {
+  margin-left: 0.5rem;
+  font-style: italic;
+  color: #888;
+}
+
+/* Container for buttons, but since ne mijenjamo JSX, samo stiliziramo dugmad */
+.delete-button,
+.edit-button {
+  background-color: #ff5c5c;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 0.5rem; /* razmak između dugmadi */
+}
+
+.edit-button {
+  background-color: blue;
+  padding: 0.4rem 0.8rem;
+}
+
+.delete-button:hover {
+  background-color: #e04343;
+}
+
+.edit-button:hover {
+  background-color: #003399;
+}
+
+/* Da prvo dugme nema marginu s lijeve strane */
+.delete-button:first-of-type,
+.edit-button:first-of-type {
+  margin-left: 0;
+}

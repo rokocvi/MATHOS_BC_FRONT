@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { getBooks, deleteBook } from '../data/localStorageHelper';
+import './BookList.css';
 
-function BookList() {
+function BookList({setActivePage, setBookToEdit}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const books = getBooks();
@@ -13,7 +14,7 @@ function BookList() {
     }
   }
 
-  // Filtriraj knjige prema searchTerm i statusu
+
   const filteredBooks = books.filter(book => {
     const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          book.author.toLowerCase().includes(searchTerm.toLowerCase());
@@ -87,6 +88,15 @@ function BookList() {
               >
                 Delete
               </button>
+              <button
+                onClick={() => {
+                    setBookToEdit(book);
+                    setActivePage('edit');
+                }}
+                className='edit-button'
+                >
+                    Update
+                </button>
             </li>
           ))}
         </ul>

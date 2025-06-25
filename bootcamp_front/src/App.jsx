@@ -7,6 +7,7 @@ import { getBooks } from './data/localStorageHelper.js';
 
 function App() {
   const [activePage, setActivePage] = useState('home');
+  const [bookToEdit, setBookToEdit] = useState(null);
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
@@ -124,8 +125,17 @@ function App() {
         </div>
       )}
 
-      {activePage === 'books' && <BookList />}
-      {activePage === 'add' && <BookForm />}
+      {activePage === 'books' && <BookList
+        setActivePage={setActivePage}
+        setBookToEdit={setBookToEdit}
+      />}
+
+       {(activePage === 'add' || activePage === 'edit') && (
+        <BookForm
+          bookToEdit={activePage === 'edit' ? bookToEdit : null}
+          onDone={() => setActivePage('books')}
+        />
+      )}
     </div>
   );
 }
