@@ -1,108 +1,109 @@
-import React, { useState } from 'react';
-import { getBooks, deleteBook } from '../data/localStorageHelper';
-import './BookList.css';
+  import React, { useEffect, useState } from 'react';
+  import './BookList.css';
+  import { fetchBooks, deleteBook } from '../data/api';
 
-function BookList({setActivePage, setBookToEdit}) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const books = getBooks();
+  function BookList({ setActivePage, setBookToEdit }) {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
+    const [books, setBooks] = useState([]);
 
-  function handleDelete(id) {
-    if (window.confirm('Are you sure you want to delete this book?')) {
-      deleteBook(id);
-      window.location.reload();
+    useEffect(() => {
+      loadBooks();
+    }, [searchTerm, statusFilter]);
+
+    const loadBooks = async () => {
+      try {
+        const response = await fetchBooks({
+          titleFilter: searchTerm,
+          status: statusFilter
+        });
+        setBooks(response.data);
+      } catch (error) {
+        console.error("Greška pri učitavanju knjiga", error);
+      }
+    };
+
+    async function handleDelete(id) {
+      if (window.confirm('Are you sure you want to delete this book?')) {
+        try {
+          await deleteBook(id);
+          loadBooks(); // ponovno učitaj knjige nakon brisanja
+        } catch (error) {
+          console.error("Greška pri brisanju knjiga", error);
+        }
+      }
     }
-  }
 
+    function clearFilters() {
+      setSearchTerm('');
+      setStatusFilter('');
+    }
 
-  const filteredBooks = books.filter(book => {
-    const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         book.author.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === '' || book.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
+    return (
+      <div className='books-list'>
+        <h2>All Books</h2>
 
-  function handleSearchChange(e) {
-    setSearchTerm(e.target.value);
-  }
+        <div className="filters">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search by title or author..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
 
-  function handleStatusChange(e) {
-    setStatusFilter(e.target.value);
-  }
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="status-filter"
+          >
+            <option value="">All statuses</option>
+            <option value="za čitanje">Za čitanje</option>
+            <option value="čitam">Čitam</option>
+            <option value="pročitano">Pročitano</option>
+          </select>
 
-  function clearFilters() {
-    setSearchTerm('');
-    setStatusFilter('');
-  }
+          {(searchTerm || statusFilter) && (
+            <button onClick={clearFilters} className="clear-btn">
+              Clear
+            </button>
+          )}
+        </div>
 
-  return (
-    <div className='books-list'>
-      <h2>All Books ({books.length})</h2>
-      
-      <div className="filters">
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search by title or author..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-        
-        <select 
-          value={statusFilter} 
-          onChange={handleStatusChange}
-          className="status-filter"
-        >
-          <option value="">All statuses</option>
-          <option value="za čitanje">Za čitanje</option>
-          <option value="čitam">Čitam</option>
-          <option value="pročitano">Pročitano</option>
-        </select>
-
-        {(searchTerm || statusFilter) && (
-          <button onClick={clearFilters} className="clear-btn">
-            Clear
-          </button>
+        {books.length === 0 ? (
+          <p>No books found.</p>
+        ) : (
+          <>
+            <p>Prikazano {books.length} knjiga</p>
+            <ul>
+              {books.map(book => (
+                <li key={book.id}>
+                  <div className="book-info">
+                    <strong>{book.title}</strong> by {book.author}
+                    {book.status && <span className="status">({book.status})</span>}
+                  </div>
+                  <button
+                    onClick={() => handleDelete(book.id)}
+                    className='delete-button'
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => {
+                      setBookToEdit(book);
+                      setActivePage('edit');
+                    }}
+                    className='edit-button'
+                  >
+                    Update
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </div>
+    );
+  }
 
-      <p className="results-count">
-        Showing {filteredBooks.length} of {books.length} books
-      </p>
-
-      {filteredBooks.length === 0 ? (
-        <p>No books found.</p>
-      ) : (
-        <ul>
-          {filteredBooks.map(book => (
-            <li key={book.id}>
-              <div className="book-info">
-                <strong>{book.title}</strong> by {book.author}
-                {book.status && <span className="status">({book.status})</span>}
-              </div>
-              <button 
-                onClick={() => handleDelete(book.id)} 
-                className='delete-button'
-              >
-                Delete
-              </button>
-              <button
-                onClick={() => {
-                    setBookToEdit(book);
-                    setActivePage('edit');
-                }}
-                className='edit-button'
-                >
-                    Update
-                </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
-
-export default BookList;
+  export default BookList;

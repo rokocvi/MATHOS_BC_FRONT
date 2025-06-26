@@ -37,3 +37,16 @@ form button[type="submit"] {
 form button[type="submit"]:hover {
   background-color: #357ab8;
 }
+
+form input[type="number"] {
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+form input[type="number"]:focus {
+  border-color: #4a90e2;
+  outline: none;
+}

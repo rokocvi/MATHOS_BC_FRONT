@@ -3,24 +3,48 @@ import './App.css';
 import BookForm from './components/BookForm';
 import BookList from './components/BookList';
 import libraryImg from './assets/library.jpg';
-import { getBooks } from './data/localStorageHelper.js';
+import { fetchBooks } from './data/api.jsx';
+import BookDetails from './components/BookDetails.jsx';
+import BookDetailsList from './components/BookDetailsList.jsx';
 
 function App() {
   const [activePage, setActivePage] = useState('home');
   const [bookToEdit, setBookToEdit] = useState(null);
   const [books, setBooks] = useState([]);
+  const [selectedBook, setSelectedBook] = useState(null); // Za detaljni prikaz
 
+  // Učitaj knjige svaki put kad se promijeni activePage
   useEffect(() => {
-    setBooks(getBooks());
-  }, [activePage]); // Osvježi knjige kad se promijeni stranica
+    const loadBooks = async () => {
+      try {
+        const response = await fetchBooks(); // poziva backend
+        setBooks(response.data); // postavi podatke
+      } catch (error) {
+        console.error('Greška pri učitavanju knjiga:', error);
+      }
+    };
+
+    loadBooks();
+  }, [activePage]);
+
+  // Funkcija za odabir knjige za detaljni prikaz
+  const handleSelectBook = (book) => {
+    setSelectedBook(book);
+  };
+
+  // Povratak sa detalja na listu detalja
+  const handleBackToDetailsList = () => {
+    setSelectedBook(null);
+  };
 
   return (
     <div className="app-container">
       <h1>My Library</h1>
       <nav className="navbar">
-        <button onClick={() => setActivePage('home')}>Početna</button>
-        <button onClick={() => setActivePage('books')}>Knjige</button>
-        <button onClick={() => setActivePage('add')}>Dodaj knjigu</button>
+        <button onClick={() => { setActivePage('home'); setSelectedBook(null); }}>Početna</button>
+        <button onClick={() => { setActivePage('books'); setSelectedBook(null); }}>Knjige</button>
+        <button onClick={() => { setActivePage('add'); setSelectedBook(null); }}>Dodaj knjigu</button>
+        <button onClick={() => { setActivePage('details'); setSelectedBook(null); }}>Detalji knjiga</button>
       </nav>
 
       {activePage === 'home' && (
@@ -44,7 +68,7 @@ function App() {
                   Idite na knjige
                 </button>
               </div>
-              
+
               <div className="feature-card">
                 <div className="feature-icon">➕</div>
                 <h4>Dodajte novu knjigu</h4>
@@ -53,7 +77,7 @@ function App() {
                   Dodaj knjigu
                 </button>
               </div>
-              
+
               <div className="feature-card">
                 <div className="feature-icon">🔍</div>
                 <h4>Pretražujte i filtrirajte</h4>
@@ -125,16 +149,26 @@ function App() {
         </div>
       )}
 
-      {activePage === 'books' && <BookList
-        setActivePage={setActivePage}
-        setBookToEdit={setBookToEdit}
-      />}
+      {activePage === 'books' && (
+        <BookList
+          setActivePage={setActivePage}
+          setBookToEdit={setBookToEdit}
+        />
+      )}
 
-       {(activePage === 'add' || activePage === 'edit') && (
+      {(activePage === 'add' || activePage === 'edit') && (
         <BookForm
           bookToEdit={activePage === 'edit' ? bookToEdit : null}
           onDone={() => setActivePage('books')}
         />
+      )}
+
+      {activePage === 'details' && !selectedBook && (
+        <BookDetailsList onSelectBook={handleSelectBook} />
+      )}
+
+      {activePage === 'details' && selectedBook && (
+        <BookDetails book={selectedBook} onBack={handleBackToDetailsList} />
       )}
     </div>
   );
