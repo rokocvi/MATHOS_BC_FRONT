@@ -11,7 +11,6 @@ function BookDetails({ book, onBack }) {
       <p><strong>Naslov:</strong> {book.title}</p>
       <p><strong>Autor:</strong>{book.author}</p>
       <p><strong>Rating:</strong>{book.rating}</p>
-      <button onClick={onBack}>Natrag na listu</button>
     </div>
   );
 }

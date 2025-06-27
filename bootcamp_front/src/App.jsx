@@ -166,7 +166,8 @@ function DetailsPage() {
 
   return (
     <div>
-      <BookDetails book={book} />
+       <BookDetails book={book} />
+      <button className='goBack' onClick={() => navigate(-1)}>Nazad</button>
     </div>
   );
 }

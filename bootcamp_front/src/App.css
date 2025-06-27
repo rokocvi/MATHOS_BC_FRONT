@@ -68,3 +68,17 @@
   background-color: #007bff;
   color: #fff;
 }
+.goBack {
+  background-color: #4a90e2;      /* plava boja pozadine */
+  color: white;                   /* bijeli tekst */
+  border: none;                  /* bez obruba */
+  padding: 10px 20px;             /* malo prostora unutar gumba */
+  border-radius: 5px;             /* zaobljeni rubovi */
+  font-size: 16px;
+  cursor: pointer;               /* pokazivač prsta na hover */
+  transition: background-color 0.3s ease;
+}
+
+.goBack:hover {
+  background-color: #357ABD;      /* tamnija plava kad se mišem prijeđe */
+}
