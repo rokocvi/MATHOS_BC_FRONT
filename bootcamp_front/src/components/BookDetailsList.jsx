@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchBooks } from '../data/api';
 import './BookDetailsList.css';
+import { Link } from 'react-router-dom';
 
 
 function BookDetailsList({ onSelectBook }) {
@@ -29,7 +30,7 @@ function BookDetailsList({ onSelectBook }) {
           {books.map(book => (
             <li key={book.id}>
               <strong>{book.title}</strong> by {book.author}
-              <button onClick={() => onSelectBook(book)}>Detalji</button>
+               <Link to={`/details/${book.id}`} className="details-link">Detalji</Link>
             </li>
           ))}
         </ul>

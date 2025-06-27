@@ -54,3 +54,20 @@
 .book-details-list button:hover {
   background-color: #2563eb;
 }
+/* BookDetailsList.css */
+
+.details-link {
+  display: inline-block;
+  margin-left: 12px;
+  padding: 6px 14px;
+  background-color: #4a90e2;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.details-link:hover {
+  background-color: #357ABD;
+}

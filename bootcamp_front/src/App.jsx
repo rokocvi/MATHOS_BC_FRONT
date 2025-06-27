@@ -146,21 +146,28 @@ function AddEditBookPage({ bookToEdit, setBookToEdit }) {
 }
 
 function DetailsPage() {
-  const [selectedBook, setSelectedBook] = useState(null);
+  const { id } = useParams();
+  const [book, setBook] = useState(null);
+  const navigate = useNavigate();
 
-  const handleSelectBook = (book) => {
-    setSelectedBook(book);
-  };
+  useEffect(() => {
+    async function fetchBook() {
+      try {
+        const res = await getBookById(id);
+        setBook(res.data);
+      } catch (error) {
+        console.error('Greška pri dohvaćanju knjige:', error);
+      }
+    }
+    fetchBook();
+  }, [id]);
 
-  const handleBackToDetailsList = () => {
-    setSelectedBook(null);
-  };
+  if (!book) return <div>Učitavanje knjige...</div>;
 
   return (
-    <>
-      {!selectedBook && <BookDetailsList onSelectBook={handleSelectBook} />}
-      {selectedBook && <BookDetails book={selectedBook} onBack={handleBackToDetailsList} />}
-    </>
+    <div>
+      <BookDetails book={book} />
+    </div>
   );
 }
 
@@ -196,7 +203,8 @@ function App() {
           <Route path="/books" element={<BooksPage setBookToEdit={setBookToEdit} />} />
           <Route path="/add" element={<AddEditBookPage bookToEdit={null} setBookToEdit={setBookToEdit} />} />
           <Route path="/edit/:id" element={<EditBookPage />} />
-          <Route path="/details" element={<DetailsPage />} />
+          <Route path="/details" element={<BookDetailsList />} />
+          <Route path="/details/:id" element={<DetailsPage />} />
         </Routes>
       </div>
     </Router>
