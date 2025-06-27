@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './BookList.css';
 import { fetchBooks, deleteBook } from '../data/api';
+import { useNavigate } from 'react-router-dom';
 
 function BookList({ setActivePage, setBookToEdit }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -8,6 +9,7 @@ function BookList({ setActivePage, setBookToEdit }) {
   const [genreFilter, setGenreFilter] = useState('');
   const [books, setBooks] = useState([]);
   const [allGenres, setAllGenres] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadBooks();
@@ -18,12 +20,11 @@ function BookList({ setActivePage, setBookToEdit }) {
       const response = await fetchBooks({
         titleFilter: searchTerm,
         status: statusFilter,
-        genre: genreFilter // koristi ako backend podržava, ako ne možeš ignorirati
+        genre: genreFilter
       });
 
       let filteredBooks = response.data;
 
-      // Frontend filter za žanr ako backend ne podržava
       if (genreFilter) {
         filteredBooks = filteredBooks.filter(book =>
           book.genres.some(genre => genre.name === genreFilter)
@@ -32,7 +33,7 @@ function BookList({ setActivePage, setBookToEdit }) {
 
       setBooks(filteredBooks);
 
-      // Generiranje liste svih žanrova iz svih knjiga
+      // Skupi sve žanrove za dropdown
       const genresSet = new Set();
       response.data.forEach(book => {
         book.genres.forEach(genre => genresSet.add(genre.name));
@@ -48,17 +49,21 @@ function BookList({ setActivePage, setBookToEdit }) {
     if (window.confirm('Are you sure you want to delete this book?')) {
       try {
         await deleteBook(id);
-        loadBooks(); // ponovno učitaj knjige nakon brisanja
+        loadBooks(); 
       } catch (error) {
         console.error("Greška pri brisanju knjiga", error);
       }
     }
   }
 
+  const handleEditClick = (book) => {
+    navigate(`/edit/${book.id}`);
+  };
+
   function clearFilters() {
     setSearchTerm('');
     setStatusFilter('');
-    setGenreFilter(''); // reset i za žanr
+    setGenreFilter('');
   }
 
   return (
@@ -125,10 +130,7 @@ function BookList({ setActivePage, setBookToEdit }) {
                   Delete
                 </button>
                 <button
-                  onClick={() => {
-                    setBookToEdit(book);
-                    setActivePage('edit');
-                  }}
+                  onClick={() => handleEditClick(book)}
                   className='edit-button'
                 >
                   Update
